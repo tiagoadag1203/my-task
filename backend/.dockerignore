@@ -1,0 +1,6 @@
+.env
+vendor
+storage
+.git
+.idea
+.vscode
