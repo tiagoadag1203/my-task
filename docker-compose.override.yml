@@ -1,0 +1,13 @@
+services:
+  backend:
+    volumes:
+      - ./backend:/var/www/backend:delegated
+      - backend_vendor:/var/www/backend/vendor
+
+  frontend:
+    volumes:
+      - ./frontend:/var/www/frontend:delegated
+      - frontend_node_modules:/var/www/frontend/node_modules
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+      WATCHPACK_POLLING: "true"
