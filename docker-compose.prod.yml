@@ -16,6 +16,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.prod
+    image: mytask-backend:prod
     container_name: mytask_backend_prod
     environment:
       APP_ENV: production
@@ -39,6 +40,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+    image: mytask-frontend:prod
     container_name: mytask_frontend_prod
     expose:
       - "80"
