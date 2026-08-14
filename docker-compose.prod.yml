@@ -4,7 +4,7 @@ services:
     container_name: mytask_nginx_prod
     restart: always
     depends_on:
-      - backend
+      # - backend
       - frontend
     volumes:
       - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
@@ -12,29 +12,29 @@ services:
       - mytask_network
       - proxy_network
 
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.prod
-    image: mytask-backend:prod
-    container_name: mytask_backend_prod
-    environment:
-      APP_ENV: production
-      APP_URL: https://mytask.tiagoaugusto.com
-      APP_TIMEZONE: America/Sao_Paulo
-      DB_CONNECTION: mysql
-      DB_HOST: mysql
-      DB_PORT: 3306
-      DB_DATABASE: mytask
-      DB_USERNAME: mytask
-      DB_PASSWORD: mytask@tigas22
-    expose:
-      - "9000"
-    depends_on:
-      mysql:
-        condition: service_healthy
-    networks:
-      - mytask_network
+  # backend:
+  #   build:
+  #     context: ./backend
+  #     dockerfile: Dockerfile.prod
+  #   image: mytask-backend:prod
+  #   container_name: mytask_backend_prod
+  #   environment:
+  #     APP_ENV: production
+  #     APP_URL: https://mytask.tiagoaugusto.com
+  #     APP_TIMEZONE: America/Sao_Paulo
+  #     DB_CONNECTION: mysql
+  #     DB_HOST: mysql
+  #     DB_PORT: 3306
+  #     DB_DATABASE: mytask
+  #     DB_USERNAME: mytask
+  #     DB_PASSWORD: mytask@tigas22
+  #   expose:
+  #     - "9000"
+  #   depends_on:
+  #     mysql:
+  #       condition: service_healthy
+  #   networks:
+  #     - mytask_network
 
   frontend:
     build:
@@ -47,28 +47,28 @@ services:
     networks:
       - mytask_network
 
-  mysql:
-    image: mysql:8.0.36
-    container_name: mytask_mysql_prod
-    command: --default-authentication-plugin=mysql_native_password
-    environment:
-      MYSQL_DATABASE: mytask
-      MYSQL_USER: mytask                  
-      MYSQL_PASSWORD: mytask@tigas22      
-      MYSQL_ROOT_PASSWORD: mytask@tigas22
-      TZ: America/Sao_Paulo
-    volumes:
-      - mysql_data:/var/lib/mysql
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - mytask_network
+  # mysql:
+  #   image: mysql:8.0.36
+  #   container_name: mytask_mysql_prod
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   environment:
+  #     MYSQL_DATABASE: mytask
+  #     MYSQL_USER: mytask
+  #     MYSQL_PASSWORD: mytask@tigas22
+  #     MYSQL_ROOT_PASSWORD: mytask@tigas22
+  #     TZ: America/Sao_Paulo
+  #   volumes:
+  #     - mysql_data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   networks:
+  #     - mytask_network
 
-volumes:
-  mysql_data:
+# volumes:
+#   mysql_data:
 
 networks:
   mytask_network:
