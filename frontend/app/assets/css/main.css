@@ -1,9 +1,20 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-accent: #00ffbf;
+  --font-hero: Rubik, ui-sans-serif, system-ui, sans-serif;
+  --font-title: Spinnaker, ui-sans-serif, system-ui, sans-serif;
+  --font-body: Hind, ui-sans-serif, system-ui, sans-serif;
+  --shadow-accent: 5px 5px 0 var(--color-accent);
+  --shadow-accent-sm: 3px 3px 0 var(--color-accent);
+  --shadow-accent-lg: 7px 7px 0 var(--color-accent);
+  --shadow-accent-glow: 0 0 0 5px color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
 
 :root {
   color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
 }
 
 html,
@@ -12,16 +23,77 @@ body,
   min-height: 100%;
 }
 
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+}
+
 body {
   margin: 0;
-  font-family:
-    Inter,
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    'Segoe UI',
-    sans-serif;
-  background: #f8fafc;
-  color: #0f172a;
+  font-family: var(--font-body);
+  background: #ffffff;
+  color: #000000;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: #000000;
+}
+
+@layer components {
+  .nav-link {
+    @apply relative py-2 text-sm font-semibold text-neutral-600 transition-colors hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black;
+  }
+
+  .nav-link::after {
+    content: '';
+    @apply absolute bottom-0 left-0 h-0.5 w-0 bg-accent transition-all duration-300;
+  }
+
+  .nav-link:hover::after {
+    @apply w-full;
+  }
+
+  .mobile-nav-link {
+    @apply rounded-xl px-4 py-3 font-semibold text-neutral-700 transition-colors hover:bg-neutral-100 hover:text-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-black;
+  }
+
+  .section-eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.2em] text-neutral-500;
+  }
+
+  .section-title {
+    @apply font-title text-4xl leading-[1.08] tracking-tight text-black sm:text-5xl lg:text-6xl;
+  }
+}
+
+.floating-card {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
