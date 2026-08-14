@@ -43,7 +43,7 @@ services:
     image: mytask-frontend:prod
     container_name: mytask_frontend_prod
     expose:
-      - "80"
+      - "3000"
     networks:
       - mytask_network
 
