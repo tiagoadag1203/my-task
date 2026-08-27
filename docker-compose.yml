@@ -47,7 +47,7 @@ services:
     image: mytask-frontend:dev
     container_name: mytask_frontend
     environment:
-      NUXT_PUBLIC_API_BASE: /api/v1
+      NUXT_PUBLIC_API_BASE: /api
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
     volumes:
