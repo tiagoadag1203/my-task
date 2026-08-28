@@ -1,7 +1,10 @@
 <template>
-  <div class="min-h-screen bg-white font-body text-black">
-    <NuxtLayout>
-      <NuxtPage />
-    </NuxtLayout>
-  </div>
+  <NuxtLayout>
+    <NuxtPage />
+  </NuxtLayout>
+  <GlobalClientLifecycle />
+  <GlobalToastHost />
+  <GlobalModalHost />
+  <GlobalConfirmHost />
+  <GlobalLoaderHost />
 </template>

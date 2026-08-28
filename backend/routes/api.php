@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\SprintController;
 use App\Http\Controllers\TaskController;
@@ -22,6 +23,8 @@ Route::middleware('auth:api')->group(function (): void {
     });
 
     Route::middleware('role:user')->group(function (): void {
+        Route::get('/dashboard/analytics', [DashboardController::class, 'analytics']);
+
         Route::get('/projects', [ProjectController::class, 'index']);
         Route::post('/projects', [ProjectController::class, 'store']);
         Route::get('/projects/{project}', [ProjectController::class, 'show']);
@@ -46,10 +49,10 @@ Route::middleware('auth:api')->group(function (): void {
     });
 
     Route::prefix('admin')->middleware('role:admin')->group(function (): void {
-        Route::get('/summary', [DashboardController::class, 'summary']);
-        Route::get('/analytics', [DashboardController::class, 'analytics']);
+        Route::get('/summary', [AdminDashboardController::class, 'summary']);
+        Route::get('/analytics', [AdminDashboardController::class, 'analytics']);
         Route::get('/users', [AdminUserController::class, 'index']);
         Route::put('/users/{user}/reset-password', [AdminUserController::class, 'resetPassword']);
-        Route::get('/export', [DashboardController::class, 'export']);
+        Route::get('/export', [AdminDashboardController::class, 'export']);
     });
 });

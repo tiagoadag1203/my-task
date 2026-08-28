@@ -26,10 +26,10 @@
           da sua rotina.
         </p>
         <NuxtLink
-          to="/em-breve"
+          to="/register"
           class="mt-9 inline-flex items-center justify-center rounded-full bg-white px-7 py-4 font-semibold text-black shadow-accent transition-transform hover:-translate-y-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent"
         >
-          Quero conhecer o MyTask
+          Criar minha conta
         </NuxtLink>
       </div>
     </div>

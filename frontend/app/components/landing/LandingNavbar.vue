@@ -53,13 +53,13 @@ onUnmounted(() => {
 
       <div class="hidden items-center gap-3 lg:flex">
         <NuxtLink
-          to="/em-breve"
+          to="/login"
           class="rounded-full px-5 py-2.5 text-sm font-semibold text-black transition-colors hover:bg-neutral-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
         >
           Entrar
         </NuxtLink>
         <NuxtLink
-          to="/em-breve"
+          to="/register"
           class="rounded-full border-2 border-black bg-black px-5 py-2.5 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
         >
           Criar conta
@@ -112,14 +112,14 @@ onUnmounted(() => {
         <a class="mobile-nav-link" href="#scrum" @click="closeMenu">Scrum</a>
         <div class="mt-4 grid grid-cols-2 gap-3 border-t border-black/10 pt-5">
           <NuxtLink
-            to="/em-breve"
+            to="/login"
             class="rounded-full border border-black px-4 py-3 text-center text-sm font-semibold"
             @click="closeMenu"
           >
             Entrar
           </NuxtLink>
           <NuxtLink
-            to="/em-breve"
+            to="/register"
             class="rounded-full bg-black px-4 py-3 text-center text-sm font-semibold text-white"
             @click="closeMenu"
           >

@@ -48,6 +48,8 @@ services:
     container_name: mytask_frontend
     environment:
       NUXT_PUBLIC_API_BASE: /api
+      NUXT_PUBLIC_APP_TIMEZONE: America/Sao_Paulo
+      NUXT_PUBLIC_TAM_FORM_URL: ${NUXT_PUBLIC_TAM_FORM_URL:-}
       NUXT_HOST: 0.0.0.0
       NUXT_PORT: 3000
     volumes:
@@ -66,6 +68,8 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_DATABASE: mytask
       TZ: America/Sao_Paulo
+    ports:
+      - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     healthcheck:

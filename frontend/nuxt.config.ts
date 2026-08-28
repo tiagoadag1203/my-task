@@ -12,6 +12,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiBase: '/api',
+      tamFormUrl: '',
+      appTimezone: 'America/Sao_Paulo',
     },
   },
   app: {
@@ -20,6 +22,12 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: 'pt-BR',
       },
+      script: [
+        {
+          innerHTML:
+            "(function(){try{var p=localStorage.getItem('mytask-theme')||'system';var d=p==='dark'||(p!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.classList.toggle('dark',d);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();",
+        },
+      ],
       meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },

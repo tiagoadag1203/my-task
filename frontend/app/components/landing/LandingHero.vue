@@ -39,10 +39,10 @@
 
         <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
           <NuxtLink
-            to="/em-breve"
+            to="/register"
             class="group inline-flex items-center justify-center gap-3 rounded-full border-2 border-black bg-black px-7 py-4 font-semibold text-white shadow-accent transition-all hover:-translate-y-1 hover:shadow-accent-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-black"
           >
-            Começar em breve
+            Começar agora
             <svg
               aria-hidden="true"
               class="size-4 transition-transform group-hover:translate-x-1"
