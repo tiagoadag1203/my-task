@@ -5,6 +5,7 @@
 # Environment files
 /.env
 /.env.*
+!/.env.prod.example
 !/backend/.env.example
 !/frontend/.env.example
 

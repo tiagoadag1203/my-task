@@ -1,74 +1,117 @@
+name: mytask-prod
+
 services:
   nginx:
     image: nginx:1.25.3-alpine
     container_name: mytask_nginx_prod
     restart: always
     depends_on:
-      # - backend
-      - frontend
+      backend:
+        condition: service_started
+      frontend:
+        condition: service_started
+    environment:
+      VIRTUAL_HOST: ${VIRTUAL_HOST:-mytask.tiagoaugusto.com}
+      VIRTUAL_PORT: "80"
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST:-mytask.tiagoaugusto.com}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL:-}
     volumes:
       - ./docker/nginx/production.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - mytask_network
       - proxy_network
 
-  # backend:
-  #   build:
-  #     context: ./backend
-  #     dockerfile: Dockerfile.prod
-  #   image: mytask-backend:prod
-  #   container_name: mytask_backend_prod
-  #   environment:
-  #     APP_ENV: production
-  #     APP_URL: https://mytask.tiagoaugusto.com
-  #     APP_TIMEZONE: America/Sao_Paulo
-  #     DB_CONNECTION: mysql
-  #     DB_HOST: mysql
-  #     DB_PORT: 3306
-  #     DB_DATABASE: mytask
-  #     DB_USERNAME: mytask
-  #     DB_PASSWORD: mytask@tigas22
-  #   expose:
-  #     - "9000"
-  #   depends_on:
-  #     mysql:
-  #       condition: service_healthy
-  #   networks:
-  #     - mytask_network
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    image: mytask-backend:prod
+    container_name: mytask_backend_prod
+    restart: always
+    environment:
+      APP_NAME: ${APP_NAME:-MyTask}
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_KEY: ${APP_KEY:?Defina APP_KEY no arquivo .env}
+      APP_URL: ${APP_URL:-https://mytask.tiagoaugusto.com}
+      APP_TIMEZONE: America/Sao_Paulo
+      APP_LOCALE: pt_BR
+      AUTH_GUARD: api
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env}
+      JWT_TTL: ${JWT_TTL:-60}
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: "3306"
+      DB_DATABASE: ${MYSQL_DATABASE:-mytask}
+      DB_USERNAME: ${MYSQL_USER:-mytask}
+      DB_PASSWORD: ${MYSQL_PASSWORD:?Defina MYSQL_PASSWORD no arquivo .env}
+      CACHE_STORE: database
+      QUEUE_CONNECTION: sync
+      SESSION_DRIVER: file
+      LOG_CHANNEL: stderr
+      LOG_LEVEL: ${LOG_LEVEL:-warning}
+      ADMIN_NICKNAME: ${ADMIN_NICKNAME:-Administrador}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+    volumes:
+      - backend_storage:/var/www/backend/storage
+      - ./docker/php/production.ini:/usr/local/etc/php/conf.d/zz-production.ini:ro
+    expose:
+      - "9000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - mytask_network
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.prod
+      args:
+        NUXT_PUBLIC_API_BASE: /api
+        NUXT_PUBLIC_APP_TIMEZONE: America/Sao_Paulo
+        NUXT_PUBLIC_TAM_FORM_URL: ${NUXT_PUBLIC_TAM_FORM_URL:-}
     image: mytask-frontend:prod
     container_name: mytask_frontend_prod
+    restart: always
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: "3000"
+      NUXT_PUBLIC_API_BASE: /api
+      NUXT_PUBLIC_APP_TIMEZONE: America/Sao_Paulo
+      NUXT_PUBLIC_TAM_FORM_URL: ${NUXT_PUBLIC_TAM_FORM_URL:-}
     expose:
       - "3000"
     networks:
       - mytask_network
 
-  # mysql:
-  #   image: mysql:8.0.36
-  #   container_name: mytask_mysql_prod
-  #   command: --default-authentication-plugin=mysql_native_password
-  #   environment:
-  #     MYSQL_DATABASE: mytask
-  #     MYSQL_USER: mytask
-  #     MYSQL_PASSWORD: mytask@tigas22
-  #     MYSQL_ROOT_PASSWORD: mytask@tigas22
-  #     TZ: America/Sao_Paulo
-  #   volumes:
-  #     - mysql_data:/var/lib/mysql
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - mytask_network
+  mysql:
+    image: mysql:8.0.36
+    container_name: mytask_mysql_prod
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mytask}
+      MYSQL_USER: ${MYSQL_USER:-mytask}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Defina MYSQL_PASSWORD no arquivo .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Defina MYSQL_ROOT_PASSWORD no arquivo .env}
+      TZ: America/Sao_Paulo
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - mytask_network
 
-# volumes:
-#   mysql_data:
+volumes:
+  mysql_data:
+  backend_storage:
 
 networks:
   mytask_network:
