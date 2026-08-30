@@ -172,46 +172,22 @@ button,
     min-height: 18rem;
     border: 1px solid var(--app-border);
     border-radius: 1.5rem;
+    background: var(--app-surface-muted);
     padding: 0.75rem;
   }
 
   .kanban-column__title {
+    color: var(--app-text);
     font-family: var(--font-title);
     font-size: 1.125rem;
     line-height: 1.3;
-  }
-
-  .kanban-column[data-status='TODO'] {
-    border-color: var(--status-todo);
-    background: var(--status-todo-soft);
-  }
-
-  .kanban-column[data-status='TODO'] .kanban-column__title {
-    color: var(--status-todo-text);
-  }
-
-  .kanban-column[data-status='IN_PROGRESS'] {
-    border-color: var(--status-progress);
-    background: var(--status-progress-soft);
-  }
-
-  .kanban-column[data-status='IN_PROGRESS'] .kanban-column__title {
-    color: var(--status-progress-text);
-  }
-
-  .kanban-column[data-status='DONE'] {
-    border-color: var(--status-done);
-    background: var(--status-done-soft);
-  }
-
-  .kanban-column[data-status='DONE'] .kanban-column__title {
-    color: var(--status-done-text);
   }
 
   .task-card {
     cursor: grab;
     border: 1px solid var(--app-border);
     border-left-width: 4px;
+    border-left-color: var(--app-border);
     border-radius: 1rem;
     background: var(--app-surface);
     padding: 1rem;
@@ -219,7 +195,9 @@ button,
   }
 
   .task-card:hover {
-    border-color: var(--app-text);
+    border-top-color: var(--app-text);
+    border-right-color: var(--app-text);
+    border-bottom-color: var(--app-text);
   }
 
   .task-card:active {

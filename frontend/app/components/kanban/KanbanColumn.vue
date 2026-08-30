@@ -23,12 +23,14 @@ watch(
 
 function onAdd(event) {
   const id = Number(event.item?.dataset?.taskId)
+  const moved = items.value.find((task) => task.id === id)
+  if (moved) moved.status = props.column.value
   if (id) emit('drop-task', id, props.column.value)
 }
 </script>
 
 <template>
-  <section class="kanban-column" :data-status="column.value" :aria-label="column.label">
+  <section class="kanban-column" :aria-label="column.label">
     <header class="mb-3 flex items-center justify-between gap-2 px-1">
       <h3 class="kanban-column__title">{{ column.label }}</h3>
       <KanbanWipIndicator
@@ -36,7 +38,7 @@ function onAdd(event) {
         :count="tasks.length"
         :limit="wipLimit"
       />
-      <UiBadge v-else :tone="column.tone">{{ tasks.length }}</UiBadge>
+      <UiBadge v-else>{{ tasks.length }}</UiBadge>
     </header>
     <VueDraggable
       v-model="items"
@@ -50,9 +52,10 @@ function onAdd(event) {
     >
       <KanbanTaskCard
         v-for="task in items"
-        :key="task.id"
+        :key="`${task.id}-${column.value}`"
         :data-task-id="task.id"
         :task="task"
+        :status="column.value"
         :readonly="readonly"
         @edit="$emit('edit', $event)"
         @delete="$emit('delete', $event)"

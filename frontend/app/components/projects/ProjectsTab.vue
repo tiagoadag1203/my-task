@@ -50,6 +50,17 @@ async function save(payload) {
   }
 }
 
+function projectMenu(project) {
+  return [
+    { label: 'Editar', onSelect: () => openForm(project) },
+    { label: 'Excluir', tone: 'danger', onSelect: () => remove(project) },
+  ]
+}
+
+function openProject(project) {
+  setQuery({ project: project.id })
+}
+
 async function remove(project) {
   const confirmed = await ask({
     title: 'Excluir projeto',
@@ -104,28 +115,32 @@ async function remove(project) {
       </template>
     </UiEmptyState>
     <div v-else class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-      <UiCard
+      <article
         v-for="project in projects"
         :key="project.id"
-        as="article"
-        class="flex min-h-52 flex-col"
+        class="app-card relative flex min-h-52 cursor-pointer flex-col p-5 transition-colors hover:border-[var(--app-text)]"
+        role="link"
+        :aria-label="`Abrir projeto ${project.name}`"
+        tabindex="0"
+        @click="openProject(project)"
+        @keydown.enter.prevent="openProject(project)"
+        @keydown.space.prevent="openProject(project)"
       >
-        <h3 class="font-title text-xl">{{ project.name }}</h3>
+        <div class="flex items-start gap-2">
+          <h3 class="min-w-0 flex-1 font-title text-xl">{{ project.name }}</h3>
+          <UiMenu
+            :label="`Ações do projeto ${project.name}`"
+            :items="projectMenu(project)"
+          />
+        </div>
         <p class="mt-2 line-clamp-3 text-[var(--app-text-muted)]">
           {{ project.description || 'Sem descrição.' }}
         </p>
-        <div class="mt-4 flex gap-4 text-sm text-[var(--app-text-muted)]">
+        <div class="mt-auto flex gap-4 pt-4 text-sm text-[var(--app-text-muted)]">
           <span>{{ project.sprints_count ?? 0 }} sprints</span>
           <span>{{ project.tasks_count ?? 0 }} tarefas</span>
         </div>
-        <div class="mt-auto flex flex-wrap gap-2 pt-5">
-          <UiButton size="sm" @click="setQuery({ project: project.id })">Abrir</UiButton>
-          <UiButton variant="secondary" size="sm" @click="openForm(project)">Editar</UiButton>
-          <UiButton variant="ghost" size="sm" class="text-red-700 dark:text-red-300" @click="remove(project)">
-            Excluir
-          </UiButton>
-        </div>
-      </UiCard>
+      </article>
     </div>
 
     <nav v-if="pagination.last_page > 1" class="mt-6 flex items-center justify-center gap-3" aria-label="Paginação de projetos">

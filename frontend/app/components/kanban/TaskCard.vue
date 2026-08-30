@@ -1,10 +1,12 @@
 <script setup>
 const props = defineProps({
   task: { type: Object, required: true },
+  status: { type: String, default: '' },
   readonly: Boolean,
 })
 
 const emit = defineEmits(['edit', 'delete'])
+const visualStatus = computed(() => props.status || props.task.status)
 
 const menuItems = computed(() => [
   { label: 'Editar', onSelect: () => emit('edit', props.task) },
@@ -15,7 +17,7 @@ const menuItems = computed(() => [
 <template>
   <article
     class="task-card group"
-    :data-status="task.status"
+    :data-status="visualStatus"
   >
     <div class="flex items-start gap-2">
       <h4 class="min-w-0 flex-1 font-semibold leading-snug">{{ task.title }}</h4>

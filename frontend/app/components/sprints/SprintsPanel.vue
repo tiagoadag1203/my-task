@@ -58,6 +58,22 @@ async function save(payload) {
   }
 }
 
+function sprintMenu(sprint) {
+  if (sprint.status === 'PLANNING') {
+    return [
+      { label: 'Editar', onSelect: () => openForm(sprint) },
+      { label: 'Ativar', onSelect: () => changeStatus(sprint, 'ACTIVE') },
+      { label: 'Excluir', tone: 'danger', onSelect: () => remove(sprint) },
+    ]
+  }
+
+  if (sprint.status === 'ACTIVE') {
+    return [{ label: 'Finalizar', onSelect: () => changeStatus(sprint, 'FINISHED') }]
+  }
+
+  return []
+}
+
 async function changeStatus(sprint, nextStatus) {
   const action = nextStatus === 'ACTIVE' ? 'ativar' : 'finalizar'
   const confirmed = await ask({
@@ -124,54 +140,33 @@ watch(sprints, (value) => emit('updated', value), { immediate: true })
     </p>
     <div v-else>
       <div class="mb-5 flex gap-3 overflow-x-auto pb-2">
-        <UiCard
+        <article
           v-for="sprint in sprints"
           :key="sprint.id"
-          as="article"
-          class="min-w-64"
+          class="app-card relative min-w-64 cursor-pointer p-5 transition-colors hover:border-[var(--app-text)]"
           :class="selectedSprint?.id === sprint.id ? 'border-[var(--app-accent)]' : ''"
+          role="button"
+          :aria-label="`Selecionar sprint ${sprint.name}`"
+          tabindex="0"
+          @click="select(sprint)"
+          @keydown.enter.prevent="select(sprint)"
+          @keydown.space.prevent="select(sprint)"
         >
-          <button class="w-full text-left" @click="select(sprint)">
-            <UiBadge>{{ sprint.status }}</UiBadge>
-            <h4 class="mt-2 font-title text-lg">{{ sprint.name }}</h4>
-            <p class="mt-1 text-xs text-[var(--app-text-muted)]">
-              {{ formatDate(sprint.started_at) }} – {{ formatDate(sprint.ended_at) }}
-            </p>
-          </button>
-          <div class="mt-3 flex flex-wrap gap-2">
-            <UiButton
-              v-if="sprint.status === 'PLANNING'"
-              variant="ghost"
-              size="sm"
-              @click="openForm(sprint)"
-            >
-              Editar
-            </UiButton>
-            <UiButton
-              v-if="sprint.status === 'PLANNING'"
-              size="sm"
-              @click="changeStatus(sprint, 'ACTIVE')"
-            >
-              Ativar
-            </UiButton>
-            <UiButton
-              v-if="sprint.status === 'ACTIVE'"
-              size="sm"
-              @click="changeStatus(sprint, 'FINISHED')"
-            >
-              Finalizar
-            </UiButton>
-            <UiButton
-              v-if="sprint.status === 'PLANNING'"
-              variant="ghost"
-              size="sm"
-              class="text-red-700 dark:text-red-300"
-              @click="remove(sprint)"
-            >
-              Excluir
-            </UiButton>
+          <div class="flex items-start gap-2">
+            <div class="min-w-0 flex-1">
+              <UiBadge>{{ sprint.status }}</UiBadge>
+              <h4 class="mt-2 font-title text-lg">{{ sprint.name }}</h4>
+              <p class="mt-1 text-xs text-[var(--app-text-muted)]">
+                {{ formatDate(sprint.started_at) }} – {{ formatDate(sprint.ended_at) }}
+              </p>
+            </div>
+            <UiMenu
+              v-if="sprintMenu(sprint).length"
+              :label="`Ações da sprint ${sprint.name}`"
+              :items="sprintMenu(sprint)"
+            />
           </div>
-        </UiCard>
+        </article>
         <UiEmptyState
           v-if="!sprints.length"
           title="Crie uma sprint para planejar a próxima entrega."
