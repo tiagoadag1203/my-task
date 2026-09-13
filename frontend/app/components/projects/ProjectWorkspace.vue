@@ -7,6 +7,12 @@ const { $api } = useNuxtApp()
 const knownSprints = ref([])
 const backlog = ref(null)
 const sprintsPanel = ref(null)
+const activeWorkspaceTab = ref('backlog')
+
+const workspaceTabs = [
+  { id: 'backlog', label: 'Backlog' },
+  { id: 'sprints', label: 'Sprints' },
+]
 
 const { data: project, status, error, refresh } = await useAsyncData(
   () => `project-${props.projectId}`,
@@ -40,8 +46,44 @@ function syncAll() {
         <p v-if="project.description" class="mt-2 max-w-3xl text-neutral-300">{{ project.description }}</p>
         <div class="mt-4 flex gap-5 text-sm"><span>{{ project.tasks_count ?? 0 }} tarefas</span><span>{{ project.sprints_count ?? 0 }} sprints</span></div>
       </header>
-      <div class="grid items-start gap-6 2xl:grid-cols-[360px_1fr]">
+
+      <nav
+        class="mb-6 flex gap-2 border-b border-[var(--app-border)]"
+        role="tablist"
+        aria-label="Áreas do projeto"
+      >
+        <button
+          v-for="tab in workspaceTabs"
+          :id="`project-tab-${tab.id}`"
+          :key="tab.id"
+          type="button"
+          class="relative min-w-28 px-5 py-3 text-sm font-bold transition-colors"
+          :class="activeWorkspaceTab === tab.id
+            ? 'text-[var(--app-text)] after:absolute after:inset-x-0 after:-bottom-px after:h-1 after:rounded-t-full after:bg-[var(--app-accent)]'
+            : 'text-[var(--app-text-muted)] hover:text-[var(--app-text)]'"
+          role="tab"
+          :aria-selected="activeWorkspaceTab === tab.id"
+          :aria-controls="`project-panel-${tab.id}`"
+          @click="activeWorkspaceTab = tab.id"
+        >
+          {{ tab.label }}
+        </button>
+      </nav>
+
+      <div
+        v-show="activeWorkspaceTab === 'backlog'"
+        id="project-panel-backlog"
+        role="tabpanel"
+        aria-labelledby="project-tab-backlog"
+      >
         <BacklogPanel ref="backlog" :project-id="projectId" :sprints="knownSprints" @changed="syncAll" />
+      </div>
+      <div
+        v-show="activeWorkspaceTab === 'sprints'"
+        id="project-panel-sprints"
+        role="tabpanel"
+        aria-labelledby="project-tab-sprints"
+      >
         <SprintsPanel ref="sprintsPanel" :project-id="projectId" @updated="syncSprints" />
       </div>
     </template>

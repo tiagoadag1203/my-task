@@ -29,6 +29,26 @@ const selectedSprint = computed(() =>
 )
 const migrationTargets = computed(() => sprints.value.filter((sprint) => ['PLANNING', 'ACTIVE'].includes(sprint.status)))
 
+function sprintStatusLabel(status) {
+  return {
+    ACTIVE: 'Ativa',
+    PLANNING: 'Em planejamento',
+    FINISHED: 'Encerrada',
+  }[status] ?? status
+}
+
+function sprintCardClass(sprint) {
+  if (sprint.status === 'ACTIVE') {
+    return 'border-2 border-[var(--app-accent)] bg-[color-mix(in_srgb,var(--app-accent)_10%,var(--app-surface))] shadow-accent-sm'
+  }
+
+  if (selectedSprint.value?.id === sprint.id) {
+    return 'border-[var(--app-text)]'
+  }
+
+  return 'opacity-75'
+}
+
 function select(sprint) {
   router.push({ query: { ...route.query, sprint: sprint.id } })
 }
@@ -143,8 +163,8 @@ watch(sprints, (value) => emit('updated', value), { immediate: true })
         <article
           v-for="sprint in sprints"
           :key="sprint.id"
-          class="app-card relative min-w-64 cursor-pointer p-5 transition-colors hover:border-[var(--app-text)]"
-          :class="selectedSprint?.id === sprint.id ? 'border-[var(--app-accent)]' : ''"
+          class="app-card relative min-w-64 cursor-pointer p-5 transition-all hover:border-[var(--app-text)] hover:opacity-100"
+          :class="sprintCardClass(sprint)"
           role="button"
           :aria-label="`Selecionar sprint ${sprint.name}`"
           tabindex="0"
@@ -154,7 +174,9 @@ watch(sprints, (value) => emit('updated', value), { immediate: true })
         >
           <div class="flex items-start gap-2">
             <div class="min-w-0 flex-1">
-              <UiBadge>{{ sprint.status }}</UiBadge>
+              <UiBadge :tone="sprint.status === 'ACTIVE' ? 'accent' : 'neutral'" :dot="sprint.status === 'ACTIVE'">
+                {{ sprintStatusLabel(sprint.status) }}
+              </UiBadge>
               <h4 class="mt-2 font-title text-lg">{{ sprint.name }}</h4>
               <p class="mt-1 text-xs text-[var(--app-text-muted)]">
                 {{ formatDate(sprint.started_at) }} – {{ formatDate(sprint.ended_at) }}
