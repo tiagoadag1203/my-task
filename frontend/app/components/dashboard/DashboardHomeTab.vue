@@ -62,6 +62,8 @@ const lineOptions = computed(() => ({
     y: { ...scaleOptions.value, beginAtZero: true },
   },
 }))
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -72,10 +74,10 @@ const lineOptions = computed(() => ({
       <p class="mt-1 text-neutral-600 dark:text-neutral-300">Uma leitura simples para orientar o próximo passo.</p>
     </header>
 
-    <div v-if="status === 'pending'" class="grid gap-5 lg:grid-cols-2">
+    <div v-if="isFirstLoading" class="grid gap-5 lg:grid-cols-2">
       <div v-for="index in 2" :key="index" class="h-80 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
     </div>
-    <div v-else-if="error" class="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
+    <div v-else-if="showError" class="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
       <p>As estatísticas ainda não puderam ser carregadas.</p>
       <UiButton variant="ghost" size="sm" class="mt-2" @click="refresh">Tentar novamente</UiButton>
     </div>

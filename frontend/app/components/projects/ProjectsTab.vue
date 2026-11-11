@@ -76,6 +76,8 @@ async function remove(project) {
     feedback.value = errorMessage(exception)
   }
 }
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -98,10 +100,10 @@ async function remove(project) {
     <p v-if="feedback" role="status" class="mb-4 rounded-xl bg-amber-100 p-3 text-sm font-semibold text-amber-950">
       {{ feedback }}
     </p>
-    <div v-if="status === 'pending'" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <div v-if="isFirstLoading" class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
       <div v-for="index in 6" :key="index" class="h-48 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
     </div>
-    <div v-else-if="error" class="rounded-2xl bg-red-50 p-5 text-red-900">
+    <div v-else-if="showError" class="rounded-2xl bg-red-50 p-5 text-red-900">
       Não foi possível carregar seus projetos.
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </div>

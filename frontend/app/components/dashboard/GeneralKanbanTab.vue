@@ -90,6 +90,8 @@ async function removeTask(task) {
     feedback.value = errorMessage(exception)
   }
 }
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -106,10 +108,10 @@ async function removeTask(task) {
     <p v-if="feedback" role="status" class="mb-4 rounded-xl bg-amber-100 px-4 py-3 text-sm font-semibold text-amber-950">
       {{ feedback }}
     </p>
-    <div v-if="status === 'pending'" class="grid gap-4 xl:grid-cols-3" aria-label="Carregando tarefas">
+    <div v-if="isFirstLoading" class="grid gap-4 xl:grid-cols-3" aria-label="Carregando tarefas">
       <div v-for="index in 3" :key="index" class="h-72 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
     </div>
-    <div v-else-if="error" class="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
+    <div v-else-if="showError" class="rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
       <p>Não foi possível carregar o quadro.</p>
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </div>

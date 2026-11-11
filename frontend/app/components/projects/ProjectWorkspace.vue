@@ -29,13 +29,15 @@ function syncAll() {
   backlog.value?.refresh()
   sprintsPanel.value?.refresh()
 }
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
   <section>
     <UiButton variant="ghost" class="mb-5" @click="$emit('back')">← Voltar aos projetos</UiButton>
-    <div v-if="status === 'pending'" class="h-40 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
-    <div v-else-if="error" class="rounded-2xl bg-red-50 p-5 text-red-900">
+    <div v-if="isFirstLoading" class="h-40 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
+    <div v-else-if="showError" class="rounded-2xl bg-red-50 p-5 text-red-900">
       Projeto não encontrado.
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </div>

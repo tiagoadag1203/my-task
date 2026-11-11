@@ -97,6 +97,8 @@ async function migrate(task, sprintId) {
   }
 }
 
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -111,8 +113,8 @@ async function migrate(task, sprintId) {
       </p>
     </div>
     <p v-if="feedback" role="status" class="mb-4 rounded-xl bg-amber-100 p-3 text-sm font-semibold text-amber-950">{{ feedback }}</p>
-    <p v-if="status === 'pending'" class="animate-pulse rounded-2xl bg-[var(--app-surface-muted)] p-10">Carregando tarefas…</p>
-    <p v-else-if="error" class="rounded-xl bg-red-50 p-4 text-red-900">
+    <p v-if="isFirstLoading" class="animate-pulse rounded-2xl bg-[var(--app-surface-muted)] p-10">Carregando tarefas…</p>
+    <p v-else-if="showError" class="rounded-xl bg-red-50 p-4 text-red-900">
       Erro ao carregar tarefas.
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </p>

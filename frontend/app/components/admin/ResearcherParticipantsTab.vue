@@ -46,6 +46,8 @@ async function resetPassword(participant) {
     feedback.value = errorMessage(exception)
   }
 }
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -68,8 +70,8 @@ async function resetPassword(participant) {
     <p v-if="feedback" role="status" class="mb-4 rounded-xl bg-accent/20 p-3 text-sm font-semibold">
       {{ feedback }}
     </p>
-    <div v-if="status === 'pending'" class="h-72 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
-    <div v-else-if="error" class="rounded-2xl bg-red-50 p-5 text-red-900">
+    <div v-if="isFirstLoading" class="h-72 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" />
+    <div v-else-if="showError" class="rounded-2xl bg-red-50 p-5 text-red-900">
       Não foi possível carregar os participantes.
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </div>

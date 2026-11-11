@@ -88,6 +88,8 @@ async function exportCsv() {
     exporting.value = false
   }
 }
+
+const { isFirstLoading, showError } = useFirstLoad(status, error)
 </script>
 
 <template>
@@ -104,8 +106,8 @@ async function exportCsv() {
       </p>
     </UiCard>
     <p v-if="exportError" role="alert" class="mb-4 rounded-xl bg-red-50 p-3 text-red-900">{{ exportError }}</p>
-    <div v-if="status === 'pending'" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"><div v-for="index in 6" :key="index" class="h-32 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" /></div>
-    <div v-else-if="error" class="rounded-2xl bg-red-50 p-5 text-red-900">
+    <div v-if="isFirstLoading" class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3"><div v-for="index in 6" :key="index" class="h-32 animate-pulse rounded-3xl bg-[var(--app-surface-muted)]" /></div>
+    <div v-else-if="showError" class="rounded-2xl bg-red-50 p-5 text-red-900">
       Não foi possível carregar os dados.
       <UiButton variant="ghost" size="sm" @click="refresh">Tentar novamente</UiButton>
     </div>
