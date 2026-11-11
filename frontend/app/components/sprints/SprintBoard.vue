@@ -22,14 +22,21 @@ const { data: tasks, status, error, refresh } = await useAsyncData(
   { default: () => [] },
 )
 
+// `data` do useAsyncData é shallowRef (Nuxt 4): mutar o objeto não dispara
+// reatividade. Substituímos o array para atualizar colunas e o contador WIP.
+function setTaskStatus(id, nextStatus) {
+  tasks.value = tasks.value.map((item) => (item.id === id ? { ...item, status: nextStatus } : item))
+}
+
 async function move(task, nextStatus) {
   if (readonly.value) return
   if (nextStatus === 'IN_PROGRESS' && tasks.value.filter((item) => item.status === 'IN_PROGRESS').length >= 3) {
     feedback.value = 'Esta sprint já possui 3 tarefas em andamento. Conclua uma antes de iniciar outra.'
+    tasks.value = [...tasks.value]
     return
   }
   const previous = task.status
-  task.status = nextStatus
+  setTaskStatus(task.id, nextStatus)
   try {
     await callRepository($api.tasks, ['update'], task.id, {
       title: task.title,
@@ -39,7 +46,7 @@ async function move(task, nextStatus) {
     emit('changed')
     toast.success('Status da tarefa atualizado.')
   } catch (exception) {
-    task.status = previous
+    setTaskStatus(task.id, previous)
     feedback.value = errorMessage(exception)
   }
 }

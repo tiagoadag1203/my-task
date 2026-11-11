@@ -15,7 +15,10 @@ const modalOpen = ref(false)
 const editingSprint = ref(null)
 const submitting = ref(false)
 const feedback = ref('')
-defineExpose({ refresh: () => refresh() })
+const sprintBoard = ref(null)
+// Recarrega a lista de sprints e também as tarefas do quadro exibido
+// (ex.: quando uma tarefa do backlog é alocada à sprint).
+defineExpose({ refresh: () => Promise.all([refresh(), sprintBoard.value?.refresh()]) })
 
 const { data: sprints, status, error, refresh } = await useAsyncData(
   () => `project-${props.projectId}-sprints`,
@@ -199,6 +202,7 @@ const { isFirstLoading, showError } = useFirstLoad(status, error)
       <UiCard v-if="selectedSprint">
         <h3 class="mb-3 font-title text-2xl">{{ selectedSprint.name }}</h3>
         <SprintsSprintBoard
+          ref="sprintBoard"
           :key="selectedSprint.id"
           :sprint="selectedSprint"
           :migration-targets="migrationTargets.filter((item) => item.status === 'ACTIVE' && item.id !== selectedSprint.id)"

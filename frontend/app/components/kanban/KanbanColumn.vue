@@ -23,8 +23,6 @@ watch(
 
 function onAdd(event) {
   const id = Number(event.item?.dataset?.taskId)
-  const moved = items.value.find((task) => task.id === id)
-  if (moved) moved.status = props.column.value
   if (id) emit('drop-task', id, props.column.value)
 }
 </script>

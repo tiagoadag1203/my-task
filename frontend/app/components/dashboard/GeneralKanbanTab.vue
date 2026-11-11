@@ -52,14 +52,21 @@ async function saveTask(payload) {
   }
 }
 
+// `data` do useAsyncData é shallowRef (Nuxt 4): mutar o objeto não dispara
+// reatividade. Substituímos o array para atualizar colunas e o contador WIP.
+function setTaskStatus(id, nextStatus) {
+  tasks.value = tasks.value.map((item) => (item.id === id ? { ...item, status: nextStatus } : item))
+}
+
 async function moveTask(task, statusValue) {
   if (statusValue === 'IN_PROGRESS' && tasks.value.filter((item) => item.status === 'IN_PROGRESS').length >= 3) {
     feedback.value = 'O limite de trabalho em progresso é de 3 tarefas. Conclua uma antes de iniciar outra.'
+    tasks.value = [...tasks.value]
     return
   }
 
   const previous = task.status
-  task.status = statusValue
+  setTaskStatus(task.id, statusValue)
   feedback.value = ''
   try {
     await callRepository(tasksRepository, ['update'], task.id, {
@@ -69,7 +76,7 @@ async function moveTask(task, statusValue) {
     })
     toast.success('Status da tarefa atualizado.')
   } catch (exception) {
-    task.status = previous
+    setTaskStatus(task.id, previous)
     feedback.value = errorMessage(exception)
     toast.warning(feedback.value)
   }
